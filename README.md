@@ -1,63 +1,144 @@
-# Global Physically-Constrained Deep Learning Water Cycle Model with Vegetation
+# H2MV
 
-Welcome to the GitHub repository for our hybrid hydrological model with vegetation (H2MV). H2MV represents a hybrid approach, combining deep learning with physical constraints to simulate the water cycle and its interaction with vegetation.
+**Global physically constrained deep learning water cycle model with vegetation**
 
-## Repository Structure
+This repository implements the H2MV model as described in the peer‑reviewed study:
 
-This repository is organized into several key folders, each containing specific types of scripts and modules necessary for the model's development and operation.
+```text
+Baghirov, Z., Jung, M., Reichstein, M., Körner, M., and Kraft, B.: H2MV (v1.0): global physically constrained deep learning water cycle model with vegetation, Geoscientific Model Development, 18, 2921–2943, https://doi.org/10.5194/gmd-18-2921-2025 2025.
+```
 
-### `datasets`
+H2MV combines process‑based physics with deep learning to simulate the terrestrial water cycle and its interactions with vegetation under global constraints.
 
-This directory hosts scripts and modules for managing datasets, specifically designed to work with the PyTorch Dataset class. It includes:
+## 🚀 Key Features
 
-- `ZarrDataset.py`: Manages training, testing, and validation datasets for model training.
-- `helpers_loading.py`: Provides helper functions for loading data into the ZarrDataset class.
-- `helpers_preprocessing.py`: Contains helper functions for preprocessing data within the ZarrDataset class.
+- Hybrid physics‑ML architecture: Integrates conceptual process models (mass balance, hydrology, vegetation dynamics) with neural networks to learn uncertain parameterizations from data.
 
-### `models`
+- Physically constrained: Enforces mass‑balance and conservation laws at every time step, ensuring realistic and interpretable outputs.
 
-Contains all modules related to the model's architecture, divided into three subdirectories:
+- Vegetation coupling: Explicitly models plant–water interactions, including soil moisture dynamics, evapotranspiration, and vegetation feedbacks.
 
-- `hybrid`: Includes Python modules for the high-level implementation of the hybrid model.
-  - `cv_helpers.py`: Functions for running k-fold cross-validation.
-  - `debug_helpers.py`: Debugging functions (used for bug fixes).
-  - `hybrid_H2O.py`: Core hybrid model implementation using PyTorch and PyTorch Lightning.
-  - `hybrid_H2O_common_step.py`: Common steps for testing/validation during training.
-  - `hybrid_H2O_training_step.py`: Training steps for model optimization.
-  - `hybrid_helpers.py`: Functions for forward computation of the model.
-  - `train_model.py`: Module for model training using cross-validation.
-  - `run_parallel_slurm.sh`: Shell script for allocating computational resources via Slurm for 10-fold cross-validation.
+- Modular and extensible: Easily add or replace components (new physics modules, datasets, neural architectures) without rewriting core code.
 
-- `neural_networks`: Lower-level neural network implementations.
-  - `neural_networks.py`: Implementation details of neural networks within the hybrid model.
+- End‑to‑end reproducibility: Compatible with both pip and Conda environments; scripts provided for efficient training on local or Slurm clusters.
 
-- `physics`: This section delves into the physical processes and conceptual models that underpin the hybrid model's understanding of the water cycle and its interactions. Each module within this directory is dedicated to a specific aspect of the water cycle.
-  - `evapotranspiration.py`: Simulates the process of evapotranspiration, integrating both the evaporation from land, interception evaporation and the transpiration from plants.
-  - `gw_storage.py`: Models the groundwater storage dynamics.
-  - `runoff.py`: Captures the runoff processes, including both surface runoff and baseflow.
-  - `snow.py`: Represents the snowpack dynamics, including accumulation, melting.
-  - `soil_gw_recharge.py`: Simulates the recharge of soil and groundwater
-  - `soil_moisture.py`: Models soil moisture dynamics, critical for understanding plant-water interactions, evapotranspiration, and soil water storage.
-  - `tws.py`: Stands for Terrestrial Water Storage, encompassing three components of water storage on land, including snow, soil moisture, and groundwater.
-  - `water_cycle_forward.py`: Provides a high-level forward run of the complete water cycle model at a single timestep, integrating the various components and processes modeled in the other modules.
+## 📂 Repository Structure
 
-### `equifinality`
+```text
+├── datasets/                  # PyTorch Dataset wrappers & data loader utils
+│   ├── ZarrDataset.py         # Manages training/validation/testing splits
+│   ├── helpers_loading.py     # Functions to load raw data into ZarrDataset
+│   └── helpers_preprocessing.py # Preprocessing utilities for ZarrDataset
+│
+├── models/                    # Model architectures & training scripts
+│   ├── hybrid/                # High‑level hybrid model implementation
+│   │   ├── cv_helpers.py         # k‑fold cross‑validation routines
+│   │   ├── hybrid_H2O.py         # Core H2MV model (PyTorch Lightning)
+│   │   ├── hybrid_H2O_common_step.py  # Shared validation/testing steps
+│   │   ├── hybrid_H2O_training_step.py # Training step definitions
+│   │   ├── hybrid_helpers.py      # Forward‑pass helper functions
+│   │   ├── train_model.py         # Training driver script (cross‑validation)
+│   │   └── run_parallel_slurm.sh  # Slurm script for 10‑fold CV
+│   │
+│   ├── neural_networks/       # Low‑level neural network definitions
+│   │   └── neural_networks.py
+│   │
+│   └── physics/               # Process‑based modules for water cycle
+│       ├── evapotranspiration.py    # Evaporation & transpiration processes
+│       ├── gw_storage.py            # Groundwater storage dynamics
+│       ├── runoff.py                # Surface runoff & baseflow
+│       ├── snow.py                  # Snowpack accumulation & melt
+│       ├── soil_gw_recharge.py      # Soil‑groundwater recharge
+│       ├── soil_moisture.py         # Soil moisture balance
+│       ├── tws.py                   # Terrestrial water storage summary
+│       └── water_cycle_forward.py   # Single‑timestep forward integration
+│
+├── equifinality/             # Post‑training equifinality analysis
+│   └── equifinality.py       # Quantify parameter equifinality
+│
+├── requirements.txt          # Python dependencies (pip)
+├── environment.yml           # Conda environment specification
+└── README.md                 # Project overview & instructions
+```
 
-- `equifinality.py`: Script for quantifying the equifinality of estimated processes post-training.
+## 🔄 Reproducibility
 
-## Model Dependencies
+All required packages are listed in requirements.txt / environment.yml.
 
-To ensure full reproducibility and ease of setup, we provide two files for managing dependencies:
+A CUDA‑enabled GPU is strongly recommended for efficient training and inference; CPU‑only runs have not been tested and will probably be substantially slower.
 
-- `requirements.txt`: For pip users.
-- `environment.yml`: For Conda users.
+## 🚀 Quick Start
 
-**Note:** While the input datasets used for training the model are not included in this repository, all referenced datasets in our paper can be obtained from their original sources.
+The following assumes access to a Slurm cluster with GPU nodes. (If you don’t have Slurm, see the note at the end.)
 
-## Getting Started
+```
+# 1. Install Python dependencies
+pip install -r requirements.txt
 
-To get started with this model, please ensure you have the necessary dependencies installed by following the instructions in either `requirements.txt` or `environment.yml`. Due to the complexity and computational requirements of the model, access to appropriate hardware and computational resources is recommended.
+# 2. Set your custom paths
+#    - In models/hybrid/train_model.py:
+#        Replace "..." with:
+#          - your Zarr dataset path (zarr_data_path)
+#          - your desired model output directory (dir_trained_models)
+#
+#    - In models/hybrid/run_parallel_slurm.sh:
+#        Replace "..." in the log/output path and Python call
+#        with your environment's actual paths
 
-## Contributing and Support
+# 3. Launch training via Slurm (10-fold cross-validation)
+sbatch models/hybrid/run_parallel_slurm.sh
+```
 
-We warmly welcome contributions, feedback, and questions! If you encounter any issues, have suggestions for improvements, or want to contribute to the project, please feel free to open an issue in the issues section of this repository. Your input is valuable in making this model more robust and useful for the community.
+🖥️ Running Locally (without Slurm)?
+
+If you don’t have access to Slurm, you can run training manually for each fold (note: this pathway hasn’t been extensively tested yet):
+
+```
+# Example: training fold 0
+python models/hybrid/train_model.py 0
+```
+
+Need help? Reach out via the Contact section below.
+
+## 🤝 Contributing
+
+We warmly welcome contributions, suggestions, and ideas! Whether it’s:
+
+* Bug reports & issues: Open an issue to let us know what’s not working or could be improved.
+
+* Feature requests: Suggest new data sources, physics processes, or neural network architectures.
+
+* Pull requests: Fork the repo, make changes on a branch, and submit a pull request.
+
+* Collaboration: If you’re interested in joint research or community development, please get in touch!
+
+## Citation
+
+```text
+Baghirov, Z., Jung, M., Reichstein, M., Körner, M., and Kraft, B.: H2MV (v1.0): global physically constrained deep learning water cycle model with vegetation, Geoscientific Model Development, 18, 2921–2943, https://doi.org/10.5194/gmd-18-2921-2025 2025.
+```
+
+```text
+@article{Baghirov2025,
+  title = {H2MV (v1.0): global physically constrained deep learning water cycle model with vegetation},
+  volume = {18},
+  ISSN = {1991-9603},
+  url = {http://dx.doi.org/10.5194/gmd-18-2921-2025},
+  DOI = {10.5194/gmd-18-2921-2025},
+  number = {10},
+  journal = {Geoscientific Model Development},
+  publisher = {Copernicus GmbH},
+  author = {Baghirov,  Zavud and Jung,  Martin and Reichstein,  Markus and K\"{o}rner,  Marco and Kraft,  Basil},
+  year = {2025},
+  month = may,
+  pages = {2921–2943}
+}
+```
+
+## 📬 Contact
+
+* Issues & Pull Requests: https://github.com/zavud/h2mv/issues
+
+* Email: zbaghirov@bgc-jena.mpg.de
+
+Thank you for your interest in H2MV!
