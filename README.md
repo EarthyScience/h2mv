@@ -4,9 +4,8 @@
 
 This repository implements the H2MV model as described in the peer‑reviewed study:
 
-```text
 Baghirov, Z., Jung, M., Reichstein, M., Körner, M., and Kraft, B.: H2MV (v1.0): global physically constrained deep learning water cycle model with vegetation, Geoscientific Model Development, 18, 2921–2943, https://doi.org/10.5194/gmd-18-2921-2025 2025.
-```
+
 
 H2MV combines process‑based physics with deep learning to simulate the terrestrial water cycle and its interactions with vegetation under global constraints.
 
@@ -114,9 +113,13 @@ We warmly welcome contributions, suggestions, and ideas! Whether it’s:
 
 ## Citation
 
+Text:
+
 ```text
 Baghirov, Z., Jung, M., Reichstein, M., Körner, M., and Kraft, B.: H2MV (v1.0): global physically constrained deep learning water cycle model with vegetation, Geoscientific Model Development, 18, 2921–2943, https://doi.org/10.5194/gmd-18-2921-2025 2025.
 ```
+
+BibTex:
 
 ```text
 @article{Baghirov2025,
