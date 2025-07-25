@@ -1,4 +1,4 @@
-# H2MV
+# H2MV <img src="h2mv_sticker.png" height=300 align="right"/>
 
 **Global physically constrained deep learning water cycle model with vegetation**
 
